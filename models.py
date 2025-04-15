@@ -28,7 +28,7 @@ class Post(Base):
     rewritten_text = Column(String)
     media_path = Column(String)
     published_at = Column(DateTime)
-    account_used = Column(BigInteger)
+    account_used = Column(String)
 
 class ScrapingTask(Base):
     __tablename__ = "scraping_tasks"
