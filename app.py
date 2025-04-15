@@ -75,13 +75,15 @@ def verify_init_data(init_data_str):
 
 @app.route('/api/post/<post_id>', methods=['GET'])
 def get_post_text(post_id):
-    init_data = request.headers.get('X-Telegram-Init-Data')
-    if not init_data:
-        return jsonify({'error': 'No Telegram init data provided'}), 401
+    #init_data = request.headers.get('X-Telegram-Init-Data')
+    #if not init_data:
+    #    return jsonify({'error': 'No Telegram init data provided'}), 401
     
-    user_id = verify_init_data(init_data)
-    if not user_id:
-        return jsonify({'error': 'Invalid Telegram init data'}), 401
+    #user_id = verify_init_data(init_data)
+    #if not user_id:
+    #    return jsonify({'error': 'Invalid Telegram init data'}), 401
+    user_id = 'user_5483587510'
+    
     
     # For simplicity, assume post_id is message_id and text is stored in DB
     session = Session()
