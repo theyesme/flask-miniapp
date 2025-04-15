@@ -88,7 +88,7 @@ def get_post_text(post_id):
     # For simplicity, assume post_id is message_id and text is stored in DB
     session = Session()
     try:
-        post = session.query(Post).filter_by(message_id=post_id, user_id=user_id).first()
+        post = session.query(Post).filter_by(id=post_id, user_id=user_id).first()
         if not post:
             return jsonify({'error': 'Post not found or not authorized'}), 404
         return jsonify({'text': post.text or ''})
