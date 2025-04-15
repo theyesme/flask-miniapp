@@ -88,10 +88,11 @@
         // Fetch original post text
         async function fetchPostText() {
             if (!postId) {
-                showError('No post ID provided.');
+                //showError('No post ID provided.');
                 return;
             }
             try {
+                showError(`Post ID provided = ${postId}`)
                 const response = await fetch(`/api/post/${postId}`, {
                     headers: {
                         'X-Telegram-Init-Data': window.Telegram.WebApp.initData
@@ -152,6 +153,7 @@
         }
 
         // Load post text on startup
+        showError(`Post ID provided = ${postId}`)
         fetchPostText();
     </script>
 </body>
