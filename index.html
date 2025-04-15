@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Editor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f0f2f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .textbox {
+            width: 100%;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        #originalText {
+            height: 100px;
+            background-color: #e9ecef;
+            resize: none;
+        }
+        #promptText {
+            height: 80px;
+            resize: vertical;
+        }
+        #regeneratedText {
+            height: 100px;
+            background-color: #e9ecef;
+            resize: none;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #0088cc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #006b9f;
+        }
+        .error {
+            color: red;
+            text-align: center;
+            margin-bottom: 15px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Post</h1>
+        <p class="error" id="errorMessage"></p>
+        <label for="originalText">Original Post Text:</label>
+        <textarea class="textbox" id="originalText" readonly></textarea>
+        <label for="promptText">Prompt for ChatGPT:</label>
+        <textarea class="textbox" id="promptText" placeholder="Enter prompt (e.g., 'Rewrite this to be more concise')"></textarea>
+        <label for="regeneratedText">Regenerated Text:</label>
+        <textarea class="textbox" id="regeneratedText" readonly></textarea>
+        <button onclick="rewriteText()">Rewrite Text</button>
+    </div>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        // Initialize Telegram Web App
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand();
+
+        // Get post_id from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const postId = urlParams.get('post_id');
+
+        // Fetch original post text
+        async function fetchPostText() {
+            if (!postId) {
+                showError('No post ID provided.');
+                return;
+            }
+            try {
+                const response = await fetch(`/api/post/${postId}`, {
+                    headers: {
+                        'X-Telegram-Init-Data': window.Telegram.WebApp.initData
+                    }
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to fetch post text.');
+                }
+                const data = await response.json();
+                document.getElementById('originalText').value = data.text || 'No text available.';
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        // Rewrite text using API
+        async function rewriteText() {
+            const prompt = document.getElementById('promptText').value.trim();
+            const originalText = document.getElementById('originalText').value;
+            if (!prompt) {
+                showError('Please enter a prompt.');
+                return;
+            }
+            try {
+                const response = await fetch('/api/rewrite', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Telegram-Init-Data': window.Telegram.WebApp.initData
+                    },
+                    body: JSON.stringify({
+                        post_id: postId,
+                        original_text: originalText,
+                        prompt: prompt
+                    })
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to rewrite text.');
+                }
+                const data = await response.json();
+                document.getElementById('regeneratedText').value = data.rewritten_text || 'No response from AI.';
+                hideError();
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        // Error handling
+        function showError(message) {
+            const errorElement = document.getElementById('errorMessage');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+
+        function hideError() {
+            const errorElement = document.getElementById('errorMessage');
+            errorElement.style.display = 'none';
+        }
+
+        // Load post text on startup
+        fetchPostText();
+    </script>
+</body>
+</html>
