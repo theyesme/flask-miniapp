@@ -95,7 +95,8 @@ def get_post_text(post_id):
             return jsonify({'error': 'Post not found or not authorized'}), 404
         return jsonify({'text': post.original_text or ''})
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        #return jsonify({'error': str(e)}), 500
+        return jsonify({'text': str(e)})
     finally:
         session.close()
 
