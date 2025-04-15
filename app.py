@@ -81,10 +81,10 @@ def get_post_text(post_id):
         return jsonify({'text': f'No Telegram init data provided, headers={request.headers}'})
         
     
-    #user_id = verify_init_data(init_data)
-    #if not user_id:
-    #    return jsonify({'error': 'Invalid Telegram init data'}), 401
-    user_id = 'user_5483587510'
+    user_id = verify_init_data(init_data)
+    if not user_id:
+        return jsonify({'error': 'Invalid Telegram init data; headers={request.headers}'}), 401
+    
     
     
     # For simplicity, assume post_id is message_id and text is stored in DB
