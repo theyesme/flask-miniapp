@@ -99,7 +99,7 @@
                     }
                 });
                 if (!response.ok) {
-                    throw new Error('Failed to fetch post text.');
+                    throw new Error('Failed to fetch post text: ' + response.json());
                 }
                 const data = await response.json();
                 document.getElementById('originalText').value = data.text || 'No text available.';
