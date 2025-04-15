@@ -91,7 +91,7 @@ def get_post_text(post_id):
         post = session.query(Post).filter_by(id=post_id, account_used=user_id).first()
         if not post:
             return jsonify({'error': 'Post not found or not authorized'}), 404
-        return jsonify({'text': post.text or ''})
+        return jsonify({'text': post.original_text or ''})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     finally:
