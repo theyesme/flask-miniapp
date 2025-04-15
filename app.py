@@ -73,11 +73,13 @@ def verify_init_data(init_data_str):
     except Exception:
         return None
 
-@app.route('/api/post/<post_id>', methods=['GET'])
+@app.route('/api/post/<post_id>', methods=['GET', 'POST'])
 def get_post_text(post_id):
-    #init_data = request.headers.get('X-Telegram-Init-Data')
-    #if not init_data:
-    #    return jsonify({'error': 'No Telegram init data provided'}), 401
+    init_data = request.headers.get('X-Telegram-Init-Data')
+    if not init_data:
+        #return jsonify({'error': 'No Telegram init data provided'}), 401
+        return jsonify({'text': f'No Telegram init data provided, headers={request.headers}'})
+        
     
     #user_id = verify_init_data(init_data)
     #if not user_id:
